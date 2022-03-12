@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 from tkinter import *
 from classes import Board
 import threading
@@ -10,6 +9,7 @@ settings = [{'x':10, 'y':10, 'mines':10}, {'x':16, 'y':16, 'mines':40}, {'x':16,
 board = Board()
 flag_count=0
 timer=0
+game_on=True
 
 #Create GUI resources
 root = Tk()
@@ -94,6 +94,8 @@ def right_click(event):
 
 #When a mine is clicked, sets all squares to show a mine and turn red indicating game over
 def lose_game(board):
+    global game_on
+    game_on=False
     for y in range(board.y):
         for x in range(board.x):
             buttons[y][x].config(text="  *  ")
@@ -103,6 +105,8 @@ def lose_game(board):
 
 #When all non-mine buttons are clicked, all buttons are turned green indicating a win
 def win_game(board):
+    global game_on
+    game_on=False
     for y in range(board.y):
         for x in range(board.x):
             buttons[y][x]["state"] = "disabled"
@@ -128,10 +132,12 @@ def check_state(board):
 #Function to create the thread to manage timer and update the timer label every second 
 def update_timer():
     global timer
+    global game_on
     t = threading.Timer(1.0, update_timer)
     t.daemon = True
     t.start()
-    timer+=1
+    if game_on:
+        timer+=1
     time_label.config(text=str(timer))
 
 
@@ -143,6 +149,7 @@ def radio_new_game():
     global timer
     global buttons
     global button_frame
+    global game_on
     board = Board(settings[choice]['x'], settings[choice]['y'], settings[choice]['mines'])
     button_frame.destroy()
     button_frame = Frame(root)
@@ -153,6 +160,7 @@ def radio_new_game():
     flag_label.config(text=str(board.mines))
     timer=0
     time_label.config(text=str(timer))
+    game_on = True
 
 
 #Assign functions to control buttons
