@@ -30,13 +30,13 @@ class Board:
         self.y=y
         self.mines=mines
         for i in range(self.y):
-            i=[]
+            row=[]
             for j in range(self.x):
-                i.append(Square())
-            self.squares.append(i)
+                row.append(Square())
+            self.squares.append(row)
         coordinates=self.generate_mine_locations(self.x, self.y, self.mines)
         for loc in coordinates:
-            self.squares[loc[0]][loc[1]].set_mine()
+            self.squares[loc[1]][loc[0]].set_mine()
         self = self.calc_adjacencies(self.x, self.y)
 
 
@@ -58,8 +58,8 @@ class Board:
                 y_adj = [i-1, i, i+1]
                 for k in y_adj:
                     for l in x_adj:
-                        if (0<=k<=9 and 0<=l<=9):
-                            if self.squares[l][k].is_mine == True:
+                        if (0<=k<=self.y-1 and 0<=l<=self.x-1):
+                            if self.squares[k][l].is_mine == True:
                                 count+=1
-                self.squares[j][i].set_adj(count)
+                self.squares[i][j].set_adj(count)
         return self
